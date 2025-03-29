@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel,Field
 
 app = FastAPI()
@@ -39,3 +39,11 @@ def read_root():
 def add_book(book: BookRequest):
     BOOKS.append(**book.dict())
     return BOOKS
+
+@app.get("/get_book/{title}")
+def get(title:str):
+    for book in BOOKS:
+        if book.title == title:
+            return book
+        if not book:
+            raise HTTPException(status_code=404, detail="Book not found")
